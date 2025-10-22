@@ -4,17 +4,14 @@
 #include <memory>
 #include <queue>
 #include <format>
-
-struct HuffmanNode;
-
-using HuffmanNodePtr = std::unique_ptr<HuffmanNode>;
+#include <vector>
 
 struct HuffmanNode
 {
     char symbol_;
     size_t frequency_;
-    HuffmanNodePtr left_;
-    HuffmanNodePtr right_;
+    HuffmanNode* left_;
+    HuffmanNode* right_;
 
     HuffmanNode(char symbol, size_t frequency) :
         symbol_{ symbol },
@@ -23,25 +20,77 @@ struct HuffmanNode
         right_{ nullptr }
     {}
 
-    auto to_string() { return std::format("Node('{}' : {})", symbol_, frequency_); }
+    HuffmanNode(size_t frequency) :
+        symbol_{},
+        frequency_{ frequency },
+        left_{ nullptr },
+        right_{ nullptr }
+    {}
+
+    ~HuffmanNode()
+    {
+        delete left_;
+        delete right_;
+    }
+
+    auto to_string() const noexcept { return std::format("Node('{}' : {})", symbol_, frequency_); }
 };
 
 struct NodeCompare
 {
-    bool operator()(const HuffmanNodePtr& a, const HuffmanNodePtr& b)
+    bool operator()(const HuffmanNode* a, const HuffmanNode* b)
     {
         return a->frequency_ > b->frequency_;
     }
 };
 
-using HuffmanMinHeap = std::priority_queue<HuffmanNodePtr, std::vector<HuffmanNodePtr>, NodeCompare>;
+using HuffmanHeap = std::priority_queue<HuffmanNode *, std::vector<HuffmanNode *>, NodeCompare>;
 
-HuffmanMinHeap build_huffman_heap(std::unordered_map<char, size_t> freq_table)
+HuffmanNode* build_huffman_tree(std::unordered_map<char, size_t> freq_table)
 {
-    HuffmanMinHeap min_heap;
+    HuffmanHeap min_heap;
 
     for (const auto& elem : freq_table)
-        min_heap.emplace(std::make_unique<HuffmanNode>(elem.first, elem.second));
+        min_heap.push(new HuffmanNode(elem.first, elem.second));
     
-    return min_heap;
+    while (min_heap.size() > 1) {
+        auto a = min_heap.top();
+        min_heap.pop();
+        auto b = min_heap.top();
+        min_heap.pop();
+        
+        auto parent = new HuffmanNode(a->frequency_ + b->frequency_);
+        parent->left_ = a;
+        parent->right_ = b;
+
+        min_heap.push(parent);
+    }
+    
+    return min_heap.top();
+}
+
+std::unordered_map<char, std::vector<bool>>&
+build_huffman_codes(
+    const HuffmanNode* node, 
+    std::vector<bool>& cur_code,
+    std::unordered_map<char, std::vector<bool>>& codes)
+{
+    if (node->left_ == nullptr && node->right_ == nullptr) {
+        codes[node->symbol_] = cur_code;
+        return codes;
+    }
+
+    if (node->left_) {
+        cur_code.push_back(0);
+        build_huffman_codes(node->left_, cur_code, codes);
+        cur_code.pop_back();
+    }
+
+    if (node->right_) {
+        cur_code.push_back(1);
+        build_huffman_codes(node->right_, cur_code, codes);
+        cur_code.pop_back();
+    }
+
+    return codes;
 }
