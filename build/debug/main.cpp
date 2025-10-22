@@ -5,25 +5,42 @@
 #include <fstream>
 #include <unordered_map>
 
-#include "parse.hpp"
-#include "huffman.hpp"
+#include "parse/parse.hpp"
+#include "huffman/HuffmanTree.hpp"
 
 int main(int argc, const char **argv)
 {
-    auto input_file = get_file(argc, argv);
-    auto symbol_counts = get_symbol_counts(input_file);
-    auto root = build_huffman_tree(symbol_counts);
-    
-    std::unordered_map<char, std::vector<bool>> codes{};
-    std::vector<bool> cur_code{};
+    auto freq_table = build_freq_table(get_file(argc, argv));
 
-    for (auto&& elem : build_huffman_codes(root, cur_code, codes)) {
-        std::print("{} : ", elem.first);
-        for (const auto& b : elem.second) {
-            std::print("{}", b ? 1 : 0);
-        }
-        std::println();
-    }
+    auto huffman_tree = HuffmanTree{};
+
+    huffman_tree.build(freq_table);   
+
+    
+    
+
+
+    /*
+
+    std::unordered_map<char, int64_t> code_table;
+    int64_t cur_code = 0x00000000;
+
+    HuffmanCode code;
+
+    code.append_new_bit(0);
+    code.append_new_bit(0);
+    code.append_new_bit(1);
+    code.append_new_bit(1);
+    code.append_new_bit(0);
+
+    std::println("{}", code.to_string());
+
+    */
+    
+    
+    
+    
+    
     
     
     

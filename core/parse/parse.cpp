@@ -1,11 +1,6 @@
-#pragma once
+#include <fstream>
 
-#include <filesystem>
-#include <ranges>
-#include <span>
-
-namespace fs = std::filesystem;
-namespace views = std::views;
+#include "parse.hpp"
 
 fs::path get_file(int argc, const char **argv)
 {
@@ -21,7 +16,7 @@ fs::path get_file(int argc, const char **argv)
     return input_file;
 }
 
-std::unordered_map<char, size_t> get_symbol_counts(fs::path input_file)
+std::unordered_map<char, size_t> build_freq_table(fs::path input_file)
 {
     std::unordered_map<char, size_t> symbol_counts{}; 
 
