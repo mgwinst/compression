@@ -2,26 +2,24 @@
 
 void HuffmanCode::push_back(bool bit) noexcept
 {
-    code.push_back(bit);
+    code = (code << 1) | static_cast<uint64_t>(bit);
     len += 1;
 }
 
 void HuffmanCode::pop_back() noexcept
 {
-    code.pop_back();
+    code = (code >> 1);
     len -= 1;
 }
 
-auto HuffmanCode::to_string() const noexcept
+uint64_t HuffmanCode::pack() noexcept
 {
-    std::string s;
-    for (const auto& bit : code) {
-        s.append(bit ? "1" : "0");
-    }
-    return s;
+    return (static_cast<uint64_t>(len) << 56) | code;
 }
 
-std::unordered_map<char, int64_t>& build_huffman_codes(
+
+/*
+std::array<int32_t, 256>& build_huffman_table(
     const HuffmanNode* node, 
     HuffmanCode& cur_code,
     std::unordered_map<char, int64_t>& codes)
@@ -49,3 +47,5 @@ std::unordered_map<char, int64_t>& build_huffman_codes(
 
     return codes;
 }
+
+*/

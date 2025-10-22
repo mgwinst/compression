@@ -2,23 +2,21 @@
 
 #include <vector>
 #include <unordered_map>
+#include <array>
 
 #include "HuffmanCode.hpp"
 #include "HuffmanNode.hpp"
 
-class HuffmanCode
+struct HuffmanCode
 {
-public:
+    uint64_t code{ 0 };
+    uint8_t len{ 0 };
+
     void push_back(bool bit) noexcept;
     void pop_back() noexcept;
-    auto to_string() const noexcept;
+    uint64_t pack() noexcept;
 
-private:
-    std::vector<bool> code;
-    size_t len;
+    // void unpack() noexcept;
+
+    auto num_bits() const noexcept { return len; }
 };
-
-std::unordered_map<char, int64_t>& build_huffman_codes(
-    const HuffmanNode* node, 
-    HuffmanCode& cur_code,
-    std::unordered_map<char, int64_t>& codes);
