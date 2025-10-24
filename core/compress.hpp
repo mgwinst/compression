@@ -38,15 +38,16 @@ void compress(fs::path input_file)
                 byte_buffer.push_back(codes_to_copy);
             }
         }
-
+        
+        // std::bit_cast?
         ofs.write(reinterpret_cast<const char *>(byte_buffer.data()), byte_buffer.size() * sizeof(uint64_t));
         byte_buffer.clear();
     }
 
     if (bits_in_buffer > 0) {
         uint8_t padded_bits = 64 - bits_in_buffer;
-        uint64_t remaining_bits = (static_cast<uint64_t>(padded_bits) << 56) | bit_buffer;
-        ofs.write(reinterpret_cast<const char *>(&remaining_bits), sizeof(uint64_t));
+        bit_buffer <<= padded_bits;
+        ofs.write(reinterpret_cast<const char *>(&bit_buffer), sizeof(uint64_t));
     }
 }
 
