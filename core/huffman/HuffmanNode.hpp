@@ -13,12 +13,6 @@ struct HuffmanNode
     HuffmanNode(char symbol, size_t frequency) noexcept;
     HuffmanNode(size_t frequency) noexcept;
     ~HuffmanNode();
-
-    auto to_string() const noexcept
-    {
-        return std::format("Node('{}' : {})", symbol_, frequency_);
-    }
-
 };
 
 struct HuffmanNodeCompare

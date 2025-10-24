@@ -10,13 +10,14 @@
 
 struct HuffmanCode
 {
-    uint64_t bits_{ 0 };
+    __uint128_t bits_{ 0 };
     uint8_t len_{ 0 };
 
     void push_back(bool bit) noexcept;
     void pop_back() noexcept;
 };
 
+// this should be somewhere else...
 void build_huffman_table(
     const HuffmanNode* node, 
     HuffmanCode& cur_code,
