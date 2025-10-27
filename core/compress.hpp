@@ -1,9 +1,7 @@
-#include <boost/lockfree/spsc_queue.hpp>
 #include <fstream>
 
 #include "parse/parse.hpp"
-#include "huffman/HuffmanTree.hpp"
-#include "huffman/HuffmanCode.hpp"
+#include "huffman/huffman.hpp"
 
 void compress(fs::path input_file)
 {
@@ -14,13 +12,13 @@ void compress(fs::path input_file)
     std::unordered_map<char, HuffmanCode> huffman_table;
     build_huffman_table(huffman_tree.root, huffman_code, huffman_table);
 
-    // std::vector<uint8_t> magic_num{0x01, 0x34}; // compressed mgw files magic number -> 308 -> 0x134
-
-    std::ios::sync_with_stdio(false);
-    auto ifs = std::ifstream{input_file};
+    auto ifs = std::ifstream{ input_file };
     auto ofs = std::ofstream{"file.mgw", std::ios::binary};
 
+    // encode_huffman_table(ofs, huffman_table);
+
     std::vector<uint64_t> byte_buffer;
+    size_t total_bytes_written = 0;
     __uint128_t bit_buffer = 0;
     uint8_t bits_in_buffer = 0;
 
@@ -39,8 +37,8 @@ void compress(fs::path input_file)
             }
         }
         
-        // std::bit_cast?
         ofs.write(reinterpret_cast<const char *>(byte_buffer.data()), byte_buffer.size() * sizeof(uint64_t));
+        total_bytes_written += byte_buffer.size();
         byte_buffer.clear();
     }
 
