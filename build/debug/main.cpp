@@ -53,26 +53,29 @@ int main(int argc, const char **argv)
             auto prefix_chain = table[hash];
 
             if (prefix_chain.empty()) {
-                prefix_chain.push_back(i);
-                // emit the literal
-                i++;
+                // emit literal
+                // prefix_chain.push_back(i);
+                // i++;
             } else {
+                std::pair<uint64_t, uint32_t> biggest_match; // pair<index, match_len>
                 for (const auto& j : views::reverse(prefix_chain)) {
-                    if (i - j <= WINDOW_SIZE) [[likely]] {
-                        if (prefix_match(&input_buffer[j], &input_buffer[i])) {
-                            // check how many bytes match, keep track of the greatest match count per match in prefix_chain
-                            // then convert to struct Token and emit to output buffer
-                            // prefix_chain.push_back(i)
-                            // i += match_len
+                    if (i - j <= WINDOW_SIZE) {
+                        if (prefix_match(&input_buffer[j], &input_buffer[i])) [[likely]] {
+                            auto mismatch_byte = std::mismatch(&input_buffer[j], &input_buffer[j + MAX_MATCH - 1], &input_buffer[i]);
+                            if (mismatch_byte.first != &input_buffer[j + MAX_MATCH]) {
+                                auto num_matching_bytes = static_cast<uint32_t>(std::distance(&input_buffer[j], mismatch_byte.first));
+                                if (num_matching_bytes > biggest_match.second) {
+                                    biggest_match = std::pair<uint64_t, uint32_t>{j, num_matching_bytes};
+                                }
+                            }
                         }
-                    } else {
-                        // emit literal
-                        // i++
                     }
                 }
+                // emit token
+                // prefix_chain.push_back(i);
+                // i += biggest_match;
             }
         }
-
         num_chunks++;   
     }
 
