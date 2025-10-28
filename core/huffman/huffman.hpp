@@ -5,6 +5,7 @@
 #include <queue>
 #include <vector>
 
+// instead of char, should be token
 struct HuffmanNode
 {
     char symbol_;
@@ -49,3 +50,12 @@ void build_huffman_table(
     HuffmanCode& cur_code,
     std::unordered_map<char, HuffmanCode>& codes
 );
+
+/*
+    auto freq_table = build_freq_table(input_file);
+    auto huffman_tree = HuffmanTree{};
+    huffman_tree.build(freq_table);   
+    HuffmanCode huffman_code{};
+    std::unordered_map<char, HuffmanCode> huffman_table;
+    build_huffman_table(huffman_tree.root, huffman_code, huffman_table);
+*/

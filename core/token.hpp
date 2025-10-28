@@ -1,13 +1,21 @@
 #pragma once
 
 #include <cstdint>
+#include <format>
 
 struct Token
 {
-    uint32_t bits_ = 0; // [distance/len] [2 bytes, 1 byte] (lsb)
+    const uint16_t distance_;
+    const uint8_t match_len_;
+    const uint8_t byte_after_match_;
 
-    Token(uint16_t distance, uint8_t len) noexcept
+    Token(uint16_t distance, uint8_t match_len, uint8_t byte_after_match) :
+        distance_{ distance }, 
+        match_len_{ match_len }, 
+        byte_after_match_{ byte_after_match } {}
+
+    auto to_string() const
     {
-        bits_ = (static_cast<uint32_t>(distance) << 24) | static_cast<uint32_t>(len);
+        return std::format("Token<{},{},{}>", distance_, match_len_, byte_after_match_);
     }
 };
