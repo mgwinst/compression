@@ -43,6 +43,7 @@
         "variant": "cpp",
         "vector": "cpp",
         "execution": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "list": "cpp"
     }
 }

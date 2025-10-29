@@ -49,12 +49,13 @@ inline void lz1_compress(const fs::path& file)
 
     std::array<std::list<uint64_t>, HASH_TABLE_SIZE> table{};
 
-    std::vector<uint8_t> input_buffer;
-    input_buffer.reserve(CHUNK_SIZE);
-    std::vector<Token> output_buffer;
-    output_buffer.reserve(CHUNK_SIZE);
+    uint8_t* input_buffer = new uint8_t[CHUNK_SIZE];
+    Token* output_buffer = new Token[CHUNK_SIZE];
 
-    input_file.read((char*)(input_buffer.data()), fs::file_size(file));
+    auto input_buffer_index = 0;
+    auto output_buffer_index = 0;
+
+    input_file.read((char*)(input_buffer), fs::file_size(file));
 
     for (int i = 0; i < input_file.gcount(); i++) {
         std::print("{}", (char)input_buffer[i]);
@@ -64,17 +65,16 @@ inline void lz1_compress(const fs::path& file)
     std::println();
 
     size_t i = 0;
-
-    // hashing 3 bytes will cause error on end of buffer...
     while (i < input_file.gcount())  {
         auto hash = djb2_hash(&input_buffer[i]);
-        auto prefix_chain = table[hash];
+        auto& prefix_chain = table[hash % HASH_TABLE_SIZE];
 
         if (prefix_chain.empty()) {
-            output_buffer.push_back(Token{0, 0, input_buffer[i]});
+            output_buffer[output_buffer_index++ % CHUNK_SIZE] = Token{0, 0, input_buffer[i]};
             prefix_chain.push_back(i);
             i++;
         } else {
+            // what if no match? This breaks on no match...
             ByteMatch biggest_match{0, 0};
             for (const auto& j : views::reverse(prefix_chain)) {
                 if (i - j <= WINDOW_SIZE) {
@@ -90,13 +90,16 @@ inline void lz1_compress(const fs::path& file)
                 }
             }
 
-            output_buffer.push_back(Token{static_cast<uint16_t>(i - biggest_match.index), static_cast<uint8_t>(biggest_match.match_len), input_buffer[i + biggest_match.match_len]});
+            output_buffer[output_buffer_index++ % CHUNK_SIZE] = Token{static_cast<uint16_t>(i - biggest_match.index), static_cast<uint8_t>(biggest_match.match_len), input_buffer[i + biggest_match.match_len]};
             prefix_chain.push_back(i);
             i += biggest_match.match_len;
         }
     }
 
-    for (const auto& token : output_buffer) {
-        std::println("{}", token.to_string());
+    for (int i = 0; i < input_file.gcount(); i++) {
+        std::println("{}", output_buffer[i].to_string());
     }
+
+    delete[] input_buffer;
+    delete[] output_buffer;
 }
