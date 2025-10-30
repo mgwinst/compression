@@ -44,6 +44,7 @@
         "vector": "cpp",
         "execution": "cpp",
         "iomanip": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "istream": "cpp"
     }
 }

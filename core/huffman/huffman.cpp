@@ -2,15 +2,15 @@
 
 // **********************************
 
-HuffmanNode::HuffmanNode(char symbol, size_t frequency) noexcept :
-    symbol_{ symbol },
+HuffmanNode::HuffmanNode(Token token, size_t frequency) noexcept :
+    token_{ token },
     frequency_{ frequency },
     left_{ nullptr },
     right_{ nullptr }
 {}
 
 HuffmanNode::HuffmanNode(size_t frequency) noexcept :
-    symbol_{},
+    token_{},
     frequency_{ frequency },
     left_{ nullptr },
     right_{ nullptr }
@@ -24,7 +24,7 @@ HuffmanNode::~HuffmanNode()
 
 // **********************************
 
-void HuffmanTree::build(const std::unordered_map<char, size_t>& freq_table)
+void HuffmanTree::build(const std::unordered_map<Token, size_t>& freq_table)
 {
     HuffmanHeap<HuffmanNodeCompare> min_heap;
 
@@ -66,14 +66,14 @@ void HuffmanCode::pop_back() noexcept
 void build_huffman_table(
     const HuffmanNode* node, 
     HuffmanCode& cur_code,
-    std::unordered_map<char, HuffmanCode>& table)
+    std::unordered_map<Token, HuffmanCode>& table)
 {
     if (node == nullptr) {
         return;
     }
 
     if (node->left_ == nullptr && node->right_ == nullptr) {
-        table[node->symbol_] = cur_code;
+        table[node->token_] = cur_code;
         return;
     }
 

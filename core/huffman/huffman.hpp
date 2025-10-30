@@ -5,15 +5,18 @@
 #include <queue>
 #include <vector>
 
+#include "core/token.hpp"
+
 // instead of char, should be token
+
 struct HuffmanNode
 {
-    char symbol_;
+    Token token_;
     size_t frequency_;
     HuffmanNode* left_;
     HuffmanNode* right_;
 
-    HuffmanNode(char symbol, size_t frequency) noexcept;
+    HuffmanNode(Token token, size_t frequency) noexcept;
     HuffmanNode(size_t frequency) noexcept;
     ~HuffmanNode();
 };
@@ -30,7 +33,7 @@ struct HuffmanTree
 {
     HuffmanNode* root{ nullptr };
 
-    void build(const std::unordered_map<char, size_t>& freq_table);
+    void build(const std::unordered_map<Token, size_t>& freq_table);
 };
 
 template<typename Compare> 
@@ -48,7 +51,7 @@ struct HuffmanCode
 void build_huffman_table(
     const HuffmanNode* node, 
     HuffmanCode& cur_code,
-    std::unordered_map<char, HuffmanCode>& codes
+    std::unordered_map<Token, HuffmanCode>& codes
 );
 
 /*
