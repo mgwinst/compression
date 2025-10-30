@@ -1,4 +1,7 @@
-#include "lz1.hpp"
+#include <array>
+#include <print>
+
+#include "parse/parse.hpp"
 
 int main(int argc, const char **argv)
 {
@@ -8,13 +11,15 @@ int main(int argc, const char **argv)
     //size_t uncompressed_bytes = 0;
     //size_t compressed_bytes = 0;
     //uncompressed_bytes = fs::file_size(file);
+
+    // auto triples = lz1_compress_file(file);
  
-    auto file = get_file(argc, argv);
+    auto program_info = parse_args(argc, argv);
 
-    auto triples = lz1_compress_file(file);
+    std::println();
+    std::println("file path:  {}", program_info.file_path.string());
+    std::println("decompress? {}", program_info.decompress ? "true" : "false");
+    std::println("encrypt?    {}", program_info.encrypt ? "true" : "false");
+    std::println("image?      {}", program_info.image ? "true" : "false");
 
-    for (const auto& triple : triples) {
-        std::println("{}", triple.to_string());
-    }
-    
 }

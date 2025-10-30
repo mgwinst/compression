@@ -45,6 +45,7 @@
         "execution": "cpp",
         "iomanip": "cpp",
         "list": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "unordered_set": "cpp"
     }
 }

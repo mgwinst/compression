@@ -91,3 +91,25 @@ void build_huffman_table(
 
     return;
 }
+
+// **********************************
+
+std::unordered_map<char, size_t> build_freq_table(fs::path input_file)
+{
+    std::unordered_map<char, size_t> symbol_counts{}; 
+
+    auto ifs = std::ifstream{input_file};
+
+    if (ifs.is_open()) {
+        std::string line;
+        while (std::getline(ifs, line)) {
+            for (auto c : line) {
+                symbol_counts[c] += 1;
+            }
+        }
+
+        ifs.close();
+    }
+
+    return symbol_counts;
+}

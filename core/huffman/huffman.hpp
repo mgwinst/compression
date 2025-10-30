@@ -62,3 +62,5 @@ void build_huffman_table(
     std::unordered_map<char, HuffmanCode> huffman_table;
     build_huffman_table(huffman_tree.root, huffman_code, huffman_table);
 */
+
+std::unordered_map<char, size_t> build_freq_table(fs::path input_file);
